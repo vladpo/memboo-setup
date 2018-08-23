@@ -11,10 +11,9 @@ BACKSPACE="guess"
 XKBMODEL="pc105"
 XKBOPTIONS="grp:alt_shift_toggle,grp_led:scroll"
 EOF
+setupcon
 
-# Install git
 sudo apt-get update
-sudo apt-get install git
 
 # Clone and install ur/web
 msf=/home/membooadmin/workspace/memboo-setup
@@ -22,21 +21,27 @@ mkdir -p $msf
 cd $msf
 git clone https://github.com/urweb/urweb.git
 cd urweb
-sh autogen.sh
-sh configure
-make
-make install
+sudo apt-get install build-essential git mlton autoconf libssl-dev
+sudo apt-get install libpq-dev libmysqlclient-dev libsqlite3-dev
+sudo apt-get install automake
+sudo apt-get install libtool
+libtoolize --force
+aclocal
+autoheader
+automake --force-missing --add-missing
+autoconf
+sh ./configure
+sudo make
+sudo make install
 
 # Clone and install ur/web mail
 cd $msf
 git clone https://github.com/urweb/email.git
 cd email
-sh autogen.sh
-sh configure
-make
-make install
-
-ldconfig
+sh ./autogen.sh
+sh ./configure
+sudo make
+sudo make install
 
 # install and setup nginx
 nxf=/etc/nginx/sites-available/default
@@ -44,7 +49,7 @@ sudo apt-get install nginx
 sudo mv $nxf "$nxf.bkp"
 cd $msf
 git clone https://github.com/vladpo/memboo.git
-sudo cp memboo/setup/nginx/default $nxf
+sudo cp ./memboo/default $nxf
 sudo systemctl restart nginx
 
 # install and setup postfix
@@ -56,5 +61,5 @@ sudo cp static/* /var/www/memboo/static
 urweb @MLton fixed-heap 1.5g -- memboo
 sudo cp memboo /etc/init.d/
 sudo chmod +x /etc/init.d/memboo
-service memboo start
-update-rc.d memboo defaults
+sudo update-rc.d memboo defaults
+sudo service memboo start
