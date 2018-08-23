@@ -55,6 +55,13 @@ sudo systemctl restart nginx
 # install and setup postfix
 
 # Clone and setup memboo
+cd $msf
+git clone https://github.com/grwlf/urscript.git
+cd $msf/urscript
+sudo make
+cp Script.c $msf/memboo/urscript/
+cp Script.h $msf/memboo/urscript/
+cp Script.o $msf/memboo/urscript/
 cd $msf/memboo
 sudo mkdir -p /var/www/memboo/static
 sudo cp static/* /var/www/memboo/static
